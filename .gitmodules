@@ -1,0 +1,3 @@
+[submodule "deps/StoreLib"]
+	path = deps/StoreLib
+	url = https://github.com/StoreDev/StoreLib
