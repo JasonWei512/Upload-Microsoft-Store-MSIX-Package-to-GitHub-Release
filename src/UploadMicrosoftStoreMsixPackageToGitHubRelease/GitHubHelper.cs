@@ -22,7 +22,7 @@ public class GitHubHelper
         {
             if (await releases.GetLatest(gitHubRepoOwner, gitHubRepoName) is Release latestGitHubRelease)   // Might throw exception if not found
             {
-                if (VersionsEqual(msixPackageVersion, latestGitHubRelease.TagName))
+                if (CommonHelper.MsixPackageAndGitHubReleaseVersionsAreEqual(msixPackageVersion, latestGitHubRelease.TagName))
                 {
                     return latestGitHubRelease;
                 }
@@ -33,7 +33,7 @@ public class GitHubHelper
         IReadOnlyList<Release> allGitHubReleases = await releases.GetAll(gitHubRepoOwner, gitHubRepoName);
         foreach (Release gitHubRelease in allGitHubReleases)
         {
-            if (VersionsEqual(msixPackageVersion, gitHubRelease.TagName))
+            if (CommonHelper.MsixPackageAndGitHubReleaseVersionsAreEqual(msixPackageVersion, gitHubRelease.TagName))
             {
                 return gitHubRelease;
             }
@@ -85,30 +85,6 @@ public class GitHubHelper
 
             Console.WriteLine();
         }
-    }
-
-    /// <summary>
-    /// Only compares the first 3 digits and ignores the "v" prefix in GitHub tag name. <br/>
-    /// Example: <paramref name="msixPackageVersion"/> "1.2.3.4" is equal to <paramref name="gitHubReleaseTagName"/> "v1.2.3".
-    /// </summary>
-    /// <param name="msixPackageVersion">Have 4 digits. Example: "1.2.3.4"</param>
-    /// <param name="gitHubReleaseTagName">Can have a "v" prefix. Can contain 3 or 4 digits. Example: "v1.2.3"</param>
-    private static bool VersionsEqual(string msixPackageVersion, string gitHubReleaseTagName)
-    {
-        Version msixVersion = new(msixPackageVersion);
-
-        string gitHubReleaseVersionString = new(gitHubReleaseTagName);
-        if (gitHubReleaseVersionString.StartsWith("v") || gitHubReleaseVersionString.StartsWith("V"))
-        {
-            gitHubReleaseVersionString = gitHubReleaseVersionString[1..];
-        }
-        Version gitHubReleaseVersion = new(gitHubReleaseVersionString);
-
-        return
-            msixVersion.Major == gitHubReleaseVersion.Major &&
-            msixVersion.Minor == gitHubReleaseVersion.Minor &&
-            msixVersion.Build == gitHubReleaseVersion.Build
-            ;
     }
 
     /// <summary>
