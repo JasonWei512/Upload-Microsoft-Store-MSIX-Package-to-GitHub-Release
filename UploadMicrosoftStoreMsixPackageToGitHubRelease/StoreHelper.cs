@@ -22,7 +22,7 @@ public static class StoreHelper
     /// <summary>
     /// Get the list of the latest MSIX packages for different architectures (x64, arm64, etc.) from Microsoft Store without downloading them.
     /// </summary>
-    /// <param name="storeID">The ID of the Microsoft Store app you want to upload, e.g. "9N0DX20HK701".</param>
+    /// <param name="storeID">The ID of the Microsoft Store app you want to upload, e.g. "9NF7JTB3B17P".</param>
     public static async Task<IReadOnlyList<MsixPackage>> GetLatestMsixPacakgeList(string storeID)
     {
         DisplayCatalogHandler dcathandler = new(DCatEndpoint.Production, new Locale(Market.US, Lang.en, false));

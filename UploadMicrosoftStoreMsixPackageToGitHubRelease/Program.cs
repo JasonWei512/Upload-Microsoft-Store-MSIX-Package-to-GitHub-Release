@@ -59,7 +59,7 @@ await Parser.Default.ParseArguments<Options>(args).WithParsedAsync(async options
 
 public class Options
 {
-    [Option("store-id", Required = true, HelpText = @"The ID of the Microsoft Store app you want to upload, e.g. ""9N0DX20HK701"".")]
+    [Option("store-id", Required = true, HelpText = @"The ID of the Microsoft Store app you want to upload, e.g. ""9NF7JTB3B17P"".")]
     public string StoreID { get; set; } = string.Empty;
 
     [Option("token", Required = true, HelpText = "The GitHub token to use.")]
