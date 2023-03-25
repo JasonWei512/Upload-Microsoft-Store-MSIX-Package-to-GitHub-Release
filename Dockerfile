@@ -18,8 +18,8 @@ LABEL com.github.actions.name="Get Msix from Microsoft Store"
 LABEL com.github.actions.description="Download Msix package from Microsoft Store and upload to GitHub release."
 # See branding:
 # https://docs.github.com/actions/creating-actions/metadata-syntax-for-github-actions#branding
-LABEL com.github.actions.icon="activity"
-LABEL com.github.actions.color="orange"
+LABEL com.github.actions.icon="upload"
+LABEL com.github.actions.color="blue"
 
 # Relayer the .NET SDK, anew with the build output
 FROM mcr.microsoft.com/dotnet/runtime:7.0

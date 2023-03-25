@@ -1,8 +1,8 @@
 name: 'Upload Microsoft Store Msix Package to GitHub Release'
 description: 'Download Msix package from Microsoft Store and upload to GitHub release.'
 branding:
-  icon: activity
-  color: orange
+  icon: upload
+  color: blue
 
 
 inputs:
