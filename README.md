@@ -30,7 +30,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: 'Upload store MSIX to release'
-      uses: JasonWei512/Upload-Microsoft-Store-Msix-Package-to-GitHub-Release@v1
+      uses: JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release@v1
       with:
         store-id: 9NF7JTB3B17P
         token: ${{ secrets.GITHUB_TOKEN }}

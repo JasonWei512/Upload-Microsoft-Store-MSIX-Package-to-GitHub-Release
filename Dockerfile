@@ -9,13 +9,13 @@ RUN dotnet publish -c Release -o /app --no-self-contained
 
 # Label the container
 LABEL maintainer="Jason Wei <JasonWei512@Outlook.com>"
-LABEL repository="https://github.com/JasonWei512/Upload-Microsoft-Store-Msix-Package-to-GitHub-Release"
-LABEL homepage="https://github.com/JasonWei512/Upload-Microsoft-Store-Msix-Package-to-GitHub-Release"
+LABEL repository="https://github.com/JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release"
+LABEL homepage="https://github.com/JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release"
 
 # Label as GitHub action
-LABEL com.github.actions.name="Upload Microsoft Store Msix Package to GitHub Release"
+LABEL com.github.actions.name="Upload Microsoft Store MSIX Package to GitHub Release"
 # Limit to 160 characters
-LABEL com.github.actions.description="Download Msix package from Microsoft Store and upload to GitHub release."
+LABEL com.github.actions.description="Download MSIX package from Microsoft Store and upload to GitHub release."
 # See branding:
 # https://docs.github.com/actions/creating-actions/metadata-syntax-for-github-actions#branding
 LABEL com.github.actions.icon="upload"

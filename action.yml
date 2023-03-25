@@ -1,5 +1,5 @@
-name: 'Upload Microsoft Store Msix Package to GitHub Release'
-description: 'Download Msix package from Microsoft Store and upload to GitHub release.'
+name: 'Upload Microsoft Store MSIX Package to GitHub Release'
+description: 'Download MSIX package from Microsoft Store and upload to GitHub release.'
 branding:
   icon: upload
   color: blue
