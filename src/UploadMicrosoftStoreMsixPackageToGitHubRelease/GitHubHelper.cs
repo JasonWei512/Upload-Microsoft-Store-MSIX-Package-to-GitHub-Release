@@ -65,18 +65,20 @@ public class GitHubHelper
 
         foreach (MsixPackage packageToUpload in packagesToUpload)
         {
-            Console.WriteLine($"File to upload: {GetGitHubReleaseAssetName(packageToUpload, assetNamePattern)}");
+            string gitHubReleaseAssetName = GetGitHubReleaseAssetName(packageToUpload, assetNamePattern);
+
+            Console.WriteLine($"File to upload: {gitHubReleaseAssetName}");
             MsixPackageFile msixPackageFile = await StoreHelper.DownloadMsixPackageToTempDir(packageToUpload);
 
             using Stream fileStream = File.OpenRead(msixPackageFile.FilePath);
 
-            ReleaseAssetUpload releaseAssetUpload = new(GetGitHubReleaseAssetName(msixPackageFile, assetNamePattern), "application/octet-stream", fileStream, null);
+            ReleaseAssetUpload releaseAssetUpload = new(gitHubReleaseAssetName, "application/octet-stream", fileStream, null);
 
             if (!dryRun)
             {
                 Console.WriteLine("Uploading to GitHub release ...");
                 await gitHubClient.Repository.Release.UploadAsset(gitHubRelease, releaseAssetUpload);
-                Console.WriteLine("File uploaded!");
+                Console.WriteLine($"File uploaded: {gitHubReleaseAssetName}");
             }
             else
             {
