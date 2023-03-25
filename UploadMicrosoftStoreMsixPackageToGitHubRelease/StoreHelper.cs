@@ -29,7 +29,14 @@ public static class StoreHelper
 
         Console.WriteLine($@"Getting info of app with ID ""{storeID}"" from Microsoft Store ...");
 
-        await dcathandler.QueryDCATAsync(storeID);
+        try
+        {
+            await dcathandler.QueryDCATAsync(storeID);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($@"App with ID ""{storeID}"" not found.", e);
+        }
 
         if (!dcathandler.IsFound)
         {
