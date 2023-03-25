@@ -13,7 +13,7 @@ LABEL repository="https://github.com/JasonWei512/Upload-Microsoft-Store-Msix-Pac
 LABEL homepage="https://github.com/JasonWei512/Upload-Microsoft-Store-Msix-Package-to-GitHub-Release"
 
 # Label as GitHub action
-LABEL com.github.actions.name="Get Msix from Microsoft Store"
+LABEL com.github.actions.name="Upload Microsoft Store Msix Package to GitHub Release"
 # Limit to 160 characters
 LABEL com.github.actions.description="Download Msix package from Microsoft Store and upload to GitHub release."
 # See branding:
