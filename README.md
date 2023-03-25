@@ -34,7 +34,7 @@ jobs:
       with:
         store-id: 9NF7JTB3B17P
         token: ${{ secrets.GITHUB_TOKEN }}
-        asset-name-pattern: MyAppName_{version}_{arch}  # Optional
+        asset-name-pattern: AppName_{version}_{arch}  # Optional
 ```
 
 
@@ -56,6 +56,8 @@ The GitHub token to use.
 
 ### `asset-name-pattern` (Optional)
 
-The name pattern of the uploaded GitHub release asset's name without file extension. Can contain "{version}" and "{arch}". 
+The name pattern of the uploaded GitHub release asset's name without file extension. Can contain `{version}` and `{arch}`. 
 
-For example, for pattern "App_{version}_{arch}", the uploaded asset name can be "App_1.2.3.0_x64.Msix".
+For example, for pattern `AppName_{version}_{arch}`, the uploaded asset name can be `AppName_1.2.3.0_x64.Msix`.
+
+If you don't specify an `asset-name-pattern`, the default file name from Microsoft Store will be used. For example, `14463DeveloperName.AppName_1.2.3.0_x64__23j36sa9jtp8y.msix`.
