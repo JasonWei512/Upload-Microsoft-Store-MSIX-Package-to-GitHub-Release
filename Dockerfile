@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
 # Copy everything and publish the release (publish implicitly restores and builds)
 WORKDIR /build
 COPY . .
-WORKDIR /build/src/UploadMicrosoftStoreMsixPackageToGitHubRelease
+WORKDIR /build/UploadMicrosoftStoreMsixPackageToGitHubRelease
 RUN dotnet publish -c Release -o /app --no-self-contained
 
 # Label the container

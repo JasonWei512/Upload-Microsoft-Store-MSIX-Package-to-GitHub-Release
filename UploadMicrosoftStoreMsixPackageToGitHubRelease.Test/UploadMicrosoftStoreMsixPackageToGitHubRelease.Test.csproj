@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\UploadMicrosoftStoreMsixPackageToGitHubRelease\UploadMicrosoftStoreMsixPackageToGitHubRelease.csproj" />
+    <ProjectReference Include="..\UploadMicrosoftStoreMsixPackageToGitHubRelease\UploadMicrosoftStoreMsixPackageToGitHubRelease.csproj" />
   </ItemGroup>
 
 </Project>
