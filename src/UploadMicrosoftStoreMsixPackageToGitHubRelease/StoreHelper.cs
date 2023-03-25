@@ -6,14 +6,24 @@ using StoreLib.Services;
 
 namespace UploadMicrosoftStoreMsixPackageToGitHubRelease;
 
+/// <summary>
+/// An MSIX package on Microsoft Store, which hasn't been downloaded to disk.
+/// </summary>
 public record MsixPackage(string Moniker, string Version, string Architecture, string DownloadUrl, string FileName);
 
+/// <summary>
+/// A <see cref="MsixPackage"/> which is already downloaded to <paramref name="FilePath"/>.
+/// </summary>
 public record MsixPackageFile(string Moniker, string Version, string Architecture, string DownloadUrl, string FileName, string FilePath)
     : MsixPackage(Moniker, Version, Architecture, DownloadUrl, FileName);
 
 public static class StoreHelper
 {
-    public static async Task<IReadOnlyList<MsixPackage>> GetLatestMsixPacakgeInfo(string storeID)
+    /// <summary>
+    /// Get the list of the latest MSIX packages for different architectures (x64, arm64, etc.) from Microsoft Store without downloading them.
+    /// </summary>
+    /// <param name="storeID">The ID of the Microsoft Store app you want to upload, e.g. "9N0DX20HK701".</param>
+    public static async Task<IReadOnlyList<MsixPackage>> GetLatestMsixPacakgeList(string storeID)
     {
         DisplayCatalogHandler dcathandler = new(DCatEndpoint.Production, new Locale(Market.US, Lang.en, false));
 
@@ -23,7 +33,7 @@ public static class StoreHelper
 
         if (!dcathandler.IsFound)
         {
-            return new MsixPackage[0];
+            return new List<MsixPackage>();
         }
 
         if (dcathandler.ProductListing.Product.DisplaySkuAvailabilities.FirstOrDefault()?.Sku.LocalizedProperties.FirstOrDefault()?.SkuTitle is string appName)
@@ -39,12 +49,12 @@ public static class StoreHelper
 
         if (allPackages.FirstOrDefault()?.PackageFamilyName is not string pacakgeFamilyName)
         {
-            return new MsixPackage[0];
+            return new List<MsixPackage>();
         }
 
         if (allPackages.Max(x => x.Version) is not string latestVersion)
         {
-            return new MsixPackage[0];
+            return new List<MsixPackage>();
         }
 
         List<string> latestPackageFullNames = allPackages
@@ -86,6 +96,9 @@ public static class StoreHelper
         return msixPackages;
     }
 
+    /// <summary>
+    /// Returns an <see cref="MsixPackageFile"/> representing the downloaded MSIX package file.
+    /// </summary>
     public static async Task<MsixPackageFile> DownloadMsixPackageToTempDir(MsixPackage msixPackage)
     {
         Console.WriteLine($"Downloading {msixPackage.Architecture} package from Microsoft Store ...");
@@ -107,6 +120,9 @@ public static class StoreHelper
         return msixPackageFile;
     }
 
+    /// <summary>
+    /// Get file name from <paramref name="url"/> without downloading it. 
+    /// </summary>
     private static Task<string> GetFileNameFromDownloadUrl(string url)
     {
         DownloadService downloader = new();
@@ -125,6 +141,9 @@ public static class StoreHelper
         return taskCompletionSource.Task;
     }
 
+    /// <summary>
+    /// Returns the path of the downloaded file.
+    /// </summary>
     private static Task<string> DownloadFileToTempDir(string url)
     {
         string fileName = string.Empty;

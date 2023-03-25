@@ -4,15 +4,8 @@ namespace UploadMicrosoftStoreMsixPackageToGitHubRelease;
 
 public static class CommonHelper
 {
-    public static string PluralizeIfNeeded<T>(this string word, IReadOnlyCollection<T> collection)
-    {
-        if (collection.Count > 1)
-        {
-            return word.Pluralize();
-        }
-        else
-        {
-            return word;
-        }
-    }
+    /// <summary>
+    /// Pluralize the <paramref name="word"/> if <paramref name="collection"/> have more than 1 element.
+    /// </summary>
+    public static string PluralizeIfNeeded<T>(this string word, IReadOnlyCollection<T> collection) => collection.Count > 1 ? word.Pluralize() : word;
 }

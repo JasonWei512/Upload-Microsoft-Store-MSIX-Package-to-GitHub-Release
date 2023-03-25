@@ -4,6 +4,14 @@ using UploadMicrosoftStoreMsixPackageToGitHubRelease;
 
 async Task Start(Options options)
 {
+    // Setup
+
+    if (options.DryRun)
+    {
+        Console.WriteLine("This is a dry run, so the files won't be uploaded.");
+        Console.WriteLine();
+    }
+
     if (Environment.GetEnvironmentVariable("GITHUB_REPOSITORY") is not string gitHubRepoEnv)  // Env "GITHUB_REPOSITORY" is like "owner/repo"
     {
         throw new Exception(@"Cannot get environment variable ""GITHUB_REPOSITORY""");
@@ -13,22 +21,18 @@ async Task Start(Options options)
     string gitHubRepoOwner = gitHubRepoEnvSplits[0];
     string gitHubRepoName = gitHubRepoEnvSplits[1];
 
-    if (options.DryRun)
-    {
-        Console.WriteLine("This is a dry run, so the files won't be uploaded.");
-        Console.WriteLine();
-    }
-
     GitHubHelper.SetToken(options.Token);
 
-    IReadOnlyList<MsixPackage> msixPackages = await StoreHelper.GetLatestMsixPacakgeInfo(options.StoreID);
+    // Start
+
+    IReadOnlyList<MsixPackage> msixPackages = await StoreHelper.GetLatestMsixPacakgeList(options.StoreID);
 
     if (!msixPackages.Any())
     {
         throw new Exception($@"App with ID ""{options.StoreID}"" not found.");
     }
 
-    Release gitHubRelease = await GitHubHelper.GetLatestGitHubRelease(msixPackages, gitHubRepoOwner, gitHubRepoName);
+    Release gitHubRelease = await GitHubHelper.GetGitHubReleaseWithVersion(gitHubRepoOwner, gitHubRepoName, msixPackages[0].Version);
 
     Console.WriteLine($"Found GitHub release: {gitHubRelease.TagName}");
 
@@ -55,7 +59,7 @@ await Parser.Default.ParseArguments<Options>(args).WithParsedAsync(async options
 
 public class Options
 {
-    [Option("store-id", Required = true, HelpText = @"The ID of the Microsoft Store app you want to download, e.g. ""9N0DX20HK701"".")]
+    [Option("store-id", Required = true, HelpText = @"The ID of the Microsoft Store app you want to upload, e.g. ""9N0DX20HK701"".")]
     public string StoreID { get; set; } = string.Empty;
 
     [Option("token", Required = true, HelpText = "The GitHub token to use.")]

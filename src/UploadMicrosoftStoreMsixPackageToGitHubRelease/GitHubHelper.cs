@@ -6,25 +6,23 @@ public class GitHubHelper
 {
     private static readonly GitHubClient gitHubClient = new(new ProductHeaderValue("UploadMicrosoftStoreMsixPackageToGitHubRelease"));
 
+    /// <summary>
+    /// Set the GitHub token for authentication.
+    /// </summary>
     public static void SetToken(string token)
     {
         gitHubClient.Credentials = new Credentials(token);
     }
 
-    public static async Task<Release> GetLatestGitHubRelease(IEnumerable<MsixPackage> msixPackages, string gitHubRepoOwner, string gitHubRepoName)
+    public static async Task<Release> GetGitHubReleaseWithVersion(string gitHubRepoOwner, string gitHubRepoName, string msixPackageVersion)
     {
-        if (msixPackages.FirstOrDefault()?.Version is not string msixVersionString)
-        {
-            throw new Exception("Empty MSIX list");
-        }
-
         IReleasesClient releases = gitHubClient.Repository.Release;
 
         try
         {
             if (await releases.GetLatest(gitHubRepoOwner, gitHubRepoName) is Release latestGitHubRelease)   // Might throw exception if not found
             {
-                if (VersionsEqual(msixVersionString, latestGitHubRelease.TagName))
+                if (VersionsEqual(msixPackageVersion, latestGitHubRelease.TagName))
                 {
                     return latestGitHubRelease;
                 }
@@ -35,15 +33,25 @@ public class GitHubHelper
         IReadOnlyList<Release> allGitHubReleases = await releases.GetAll(gitHubRepoOwner, gitHubRepoName);
         foreach (Release gitHubRelease in allGitHubReleases)
         {
-            if (VersionsEqual(msixVersionString, gitHubRelease.TagName))
+            if (VersionsEqual(msixPackageVersion, gitHubRelease.TagName))
             {
                 return gitHubRelease;
             }
         }
 
-        throw new Exception("Cannot find corresponding GitHub release");
+        throw new Exception(@$"Cannot find GitHub release with version ""{msixPackageVersion}""");
     }
 
+    /// <summary>
+    /// Will skip the MSIX packages that have already been uploaded.
+    /// </summary>
+    /// <param name="dryRun">If true, do not perform the actual upload. For testing.</param>
+    /// <param name="assetNamePattern">
+    /// The file name pattern (without extension) of the uploaded GitHub release asset. <br/>
+    /// Can contain "{version}" and "{arch}". <br/>
+    /// For example, if <paramref name="assetNamePattern"/> is "App_{version}_{arch}", then this method can return "App_1.2.3.0_x64.Msix". <br/>
+    /// If <paramref name="assetNamePattern"/> is null or empty, then return <paramref name="msixPackage"/>'s default file name.
+    /// </param>
     public static async Task UploadMsixPackagesToGitHubRelease(Release gitHubRelease, IEnumerable<MsixPackage> msixPackages, string? assetNamePattern = null, bool dryRun = false)
     {
         List<MsixPackage> packagesToUpload = msixPackages
@@ -80,29 +88,35 @@ public class GitHubHelper
     }
 
     /// <summary>
-    /// Only compares the first 3 digits and ignores the "v" prefix in GitHub tag name.
-    /// Example: "1.2.3.4" is equal to "v1.2.3".
+    /// Only compares the first 3 digits and ignores the "v" prefix in GitHub tag name. <br/>
+    /// Example: <paramref name="msixPackageVersion"/> "1.2.3.4" is equal to <paramref name="gitHubReleaseTagName"/> "v1.2.3".
     /// </summary>
     /// <param name="msixPackageVersion">Have 4 digits. Example: "1.2.3.4"</param>
-    /// <param name="gitHubTagName">Can have a "v" prefix. Can contain 3 or 4 digits. Example: "v1.2.3"</param>
-    private static bool VersionsEqual(string msixVersionString, string gitHubTagName)
+    /// <param name="gitHubReleaseTagName">Can have a "v" prefix. Can contain 3 or 4 digits. Example: "v1.2.3"</param>
+    private static bool VersionsEqual(string msixPackageVersion, string gitHubReleaseTagName)
     {
-        Version msixVersion = new(msixVersionString);
+        Version msixVersion = new(msixPackageVersion);
 
-        string gitHubVersionString = new(gitHubTagName);
-        if (gitHubVersionString.StartsWith("v") || gitHubVersionString.StartsWith("V"))
+        string gitHubReleaseVersionString = new(gitHubReleaseTagName);
+        if (gitHubReleaseVersionString.StartsWith("v") || gitHubReleaseVersionString.StartsWith("V"))
         {
-            gitHubVersionString = gitHubVersionString[1..];
+            gitHubReleaseVersionString = gitHubReleaseVersionString[1..];
         }
-        Version gitHubVersion = new(gitHubVersionString);
+        Version gitHubReleaseVersion = new(gitHubReleaseVersionString);
 
         return
-            msixVersion.Major == gitHubVersion.Major &&
-            msixVersion.Minor == gitHubVersion.Minor &&
-            msixVersion.Build == gitHubVersion.Build
+            msixVersion.Major == gitHubReleaseVersion.Major &&
+            msixVersion.Minor == gitHubReleaseVersion.Minor &&
+            msixVersion.Build == gitHubReleaseVersion.Build
             ;
     }
 
+    /// <summary>
+    /// Return the GitHub release asset file name based on <paramref name="msixPackage"/>'s version and architecture, and <paramref name="assetNamePattern"/>. <br/>
+    /// <paramref name="assetNamePattern"/> can contain "{version}" and "{arch}". <br/>
+    /// For example, if <paramref name="assetNamePattern"/> is "App_{version}_{arch}", then this method can return "App_1.2.3.0_x64.Msix". <br/>
+    /// If <paramref name="assetNamePattern"/> is null or empty, then return <paramref name="msixPackage"/>'s default file name.
+    /// </summary>
     private static string GetGitHubReleaseAssetName(MsixPackage msixPackage, string? assetNamePattern = null)
     {
         if (string.IsNullOrEmpty(assetNamePattern))

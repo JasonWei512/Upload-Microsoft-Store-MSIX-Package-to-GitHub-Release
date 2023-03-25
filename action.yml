@@ -8,7 +8,7 @@ branding:
 inputs:
   store-id:
     description:
-      'The ID of the Microsoft Store app you want to download, e.g. "9N0DX20HK701".'
+      'The ID of the Microsoft Store app you want to upload, e.g. "9N0DX20HK701".'
     required: true
 
   token:
