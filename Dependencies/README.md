@@ -1,4 +1,4 @@
-## Dependencies
+# Dependencies
 
 - [StoreDev/StoreLib](https://github.com/StoreDev/StoreLib) ([3f2a98f](https://github.com/StoreDev/StoreLib/commit/3f2a98ffede0bf3f78321c194e884fd0aaf14c29)) for getting MSIX package download links of Microsoft Store apps
 
