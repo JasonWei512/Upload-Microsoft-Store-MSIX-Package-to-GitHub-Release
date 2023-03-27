@@ -1,5 +1,8 @@
 # Introduction
 
+[![GitHub Action Marketplace](https://img.shields.io/badge/GitHub%20Action-Marketplace-red)](https://github.com/marketplace/actions/upload-microsoft-store-msix-package-to-github-release)
+[![GitHub Release](https://img.shields.io/github/v/release/JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release?label=Release)](https://github.com/JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release/releases/latest)
+
 A GitHub action to download the latest MSIX packages from Microsoft Store and upload them to an **existing** GitHub release with corresponding tag. 
 
 For example, if the latest Microsoft Store package version is `1.2.3.0`, it will upload MSIX packges to a GitHub release with one of the following tags:
@@ -12,7 +15,7 @@ For example, if the latest Microsoft Store package version is `1.2.3.0`, it will
 
 # Quick Start
 
-Add a YAML file to `.github/workflows/*.yml`.
+Add a YAML file to `.github/workflows/upload-store-msix-to-release.yml` :
 
 ```yaml
 name: Upload store MSIX to release
@@ -62,9 +65,9 @@ jobs:
 
 - ## `asset-name-pattern` (Optional)
 
-  The name pattern of the uploaded GitHub release asset's name without file extension. Can contain `{version}` and `{arch}`. 
+  The pattern of the uploaded GitHub release asset's name without file extension. Can contain `{version}` and `{arch}`. 
 
-  For example, for pattern `AppName_{version}_{arch}`, the uploaded asset name can be `AppName_1.2.3.0_x64.Msix`.
+  For example, for pattern `AppName_{version}_{arch}`, the uploaded asset's name can be `AppName_1.2.3.0_x64.Msix`.
 
   If you don't specify an `asset-name-pattern`, the default file name from Microsoft Store will be used. For example, `14463DeveloperName.AppName_1.2.3.0_x64__23j36sa9jtp8y.msix`.
 
@@ -75,6 +78,6 @@ If you publish apps to Microsoft Store and love open source, you may want to upl
 
 Users can double click these packages to install them. No need to *install certificates to Trusted Root Certification Authorities with admin privilege* like for self-signed packages.
 
-While the user experience is great, the developer experience is not. Every time you create a new release, you have manually to download the MSIX packages from Microsoft Store using https://store.rg-adguard.net and upload them to GitHub release.
+While the user experience is great, the developer experience is not. Every time you create a new release, you have to manually download the MSIX packages from Microsoft Store using https://store.rg-adguard.net and upload them to GitHub release.
 
 So I created a GitHub action to automate this workflow.

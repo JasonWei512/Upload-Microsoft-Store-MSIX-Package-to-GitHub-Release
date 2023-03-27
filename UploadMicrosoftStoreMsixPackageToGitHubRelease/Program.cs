@@ -69,8 +69,8 @@ public class Options
     public bool DryRun { get; set; } = false;
 
     [Option("asset-name-pattern", HelpText = """
-        The name pattern of the uploaded GitHub release asset's name without file extension. Can contain "{version}" and "{arch}". 
-        For example, for pattern "AppName_{version}_{arch}", the uploaded asset name can be "AppName_1.2.3.0_x64.Msix".
+        The pattern of the uploaded GitHub release asset's name without file extension. Can contain "{version}" and "{arch}". 
+        For example, for pattern "AppName_{version}_{arch}", the uploaded asset's name can be "AppName_1.2.3.0_x64.Msix".
         """)]
     public string? AssetNamePattern { get; set; }
 }
