@@ -143,7 +143,7 @@ public static class StoreHelper
             taskCompletionSource.SetResult(fileName);
         };
 
-        downloader.DownloadFileTaskAsync(url, new DirectoryInfo(Path.GetTempPath()));
+        downloader.DownloadFileTaskAsync(url);
 
         return taskCompletionSource.Task;
     }
