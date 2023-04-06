@@ -97,7 +97,7 @@ public static class StoreHelper
         }
 
         Console.WriteLine($"The latest app version is: {msixPackages.FirstOrDefault()?.Version}");
-        Console.WriteLine($"Found {msixPackages.Count} {"package".PluralizeIfNeeded(msixPackages)}: {string.Join(", ", msixPackages.Select(x => x.Architecture))}");
+        Console.WriteLine($"Found {"package".ToQuantity(msixPackages.Count)}: {string.Join(", ", msixPackages.Select(x => x.Architecture))}");
         Console.WriteLine();
 
         return msixPackages;

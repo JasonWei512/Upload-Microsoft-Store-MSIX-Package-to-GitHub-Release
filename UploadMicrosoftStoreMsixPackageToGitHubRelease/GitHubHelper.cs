@@ -1,3 +1,4 @@
+using Humanizer;
 using Octokit;
 
 namespace UploadMicrosoftStoreMsixPackageToGitHubRelease;
@@ -60,7 +61,7 @@ public class GitHubHelper
             )
             .ToList();
 
-        Console.WriteLine($"{packagesToUpload.Count} {"file".PluralizeIfNeeded(packagesToUpload)} to upload.");
+        Console.WriteLine($"{"file".ToQuantity(packagesToUpload.Count)} to upload.");
         Console.WriteLine();
 
         foreach (MsixPackage packageToUpload in packagesToUpload)
