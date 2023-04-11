@@ -34,8 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-
     - name: Upload store MSIX to release
       uses: JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release@v1
       with:
