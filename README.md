@@ -79,3 +79,9 @@ Users can double click these packages to install them. No need to *install certi
 While the user experience is great, the developer experience is not. Every time you create a new release, you have to manually download the MSIX packages from Microsoft Store using https://store.rg-adguard.net and upload them to GitHub release.
 
 So I created a GitHub action to automate this workflow.
+
+# ✨ More Microsoft Store dev tools
+
+- [JasonWei512/Microsoft-Store-Badge](https://github.com/JasonWei512/Microsoft-Store-Badge)
+  
+  🏅 Generate a rating badge for your Microsoft Store app.
