@@ -15,7 +15,7 @@ public class GitHubHelper
         gitHubClient.Credentials = new Credentials(token);
     }
 
-    public static async Task<Release> GetGitHubReleaseWithVersion(string gitHubRepoOwner, string gitHubRepoName, string msixPackageVersion)
+    public static async Task<Release> GetGitHubReleaseWithVersion(string gitHubRepoOwner, string gitHubRepoName, Version msixPackageVersion)
     {
         IReleasesClient releases = gitHubClient.Repository.Release;
 
@@ -104,7 +104,7 @@ public class GitHubHelper
         }
 
         string assetName = new(assetNamePattern);
-        assetName = assetName.Replace("{version}", msixPackage.Version);
+        assetName = assetName.Replace("{version}", msixPackage.Version.ToString());
         assetName = assetName.Replace("{arch}", msixPackage.Architecture);
         assetName += Path.GetExtension(msixPackage.FileName);
 

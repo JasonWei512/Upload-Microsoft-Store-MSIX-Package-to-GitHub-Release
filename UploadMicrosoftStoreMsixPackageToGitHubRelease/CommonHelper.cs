@@ -8,21 +8,8 @@ public static class CommonHelper
     /// </summary>
     /// <param name="msixPackageVersion">Have 4 digits. Example: "1.2.3.4"</param>
     /// <param name="gitHubReleaseTagName">Can have a "v" prefix. Can contain 3 or 4 digits. Example: "v1.2.3"</param>
-    public static bool MsixPackageAndGitHubReleaseVersionsAreEqual(string msixPackageVersion, string gitHubReleaseTagName)
+    public static bool MsixPackageAndGitHubReleaseVersionsAreEqual(Version msixPackageVersion, string gitHubReleaseTagName)
     {
-        Version msixVersion;
-
-        try
-        {
-            msixVersion = new Version(msixPackageVersion);
-        }
-        catch
-        {
-            // The version of the MSIX package is retrieved from Microsoft Store.
-            // If it's not a valid version, something must be wrong.
-            throw new Exception(@$"Invalid MSIX package version ""{msixPackageVersion}""");
-        }
-
         string gitHubReleaseVersionString = new(gitHubReleaseTagName);
         if (gitHubReleaseVersionString.StartsWith("v") || gitHubReleaseVersionString.StartsWith("V"))
         {
@@ -39,9 +26,9 @@ public static class CommonHelper
         }
 
         return
-            msixVersion.Major == gitHubReleaseVersion.Major &&
-            msixVersion.Minor == gitHubReleaseVersion.Minor &&
-            msixVersion.Build == gitHubReleaseVersion.Build
+            msixPackageVersion.Major == gitHubReleaseVersion.Major &&
+            msixPackageVersion.Minor == gitHubReleaseVersion.Minor &&
+            msixPackageVersion.Build == gitHubReleaseVersion.Build
             ;
     }
 }

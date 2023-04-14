@@ -9,12 +9,12 @@ namespace UploadMicrosoftStoreMsixPackageToGitHubRelease;
 /// <summary>
 /// An MSIX package on Microsoft Store, which hasn't been downloaded to disk.
 /// </summary>
-public record MsixPackage(string Moniker, string Version, string Architecture, string DownloadUrl, string FileName);
+public record MsixPackage(string Moniker, Version Version, string Architecture, string DownloadUrl, string FileName);
 
 /// <summary>
 /// A <see cref="MsixPackage"/> which is already downloaded to <paramref name="FilePath"/>.
 /// </summary>
-public record MsixPackageFile(string Moniker, string Version, string Architecture, string DownloadUrl, string FileName, string FilePath)
+public record MsixPackageFile(string Moniker, Version Version, string Architecture, string DownloadUrl, string FileName, string FilePath)
     : MsixPackage(Moniker, Version, Architecture, DownloadUrl, FileName);
 
 public static class StoreHelper
@@ -59,48 +59,51 @@ public static class StoreHelper
             return new List<MsixPackage>();
         }
 
-        if (allPackages.Max(x => x.Version) is not string latestVersion)
+        if (pacakgeFamilyName.Split("_").FirstOrDefault() is not string packageMonikerPrefix)
+        {
+            throw new Exception(@$"Cannot get package moniker prefix from package family name ""{pacakgeFamilyName}""");
+        }
+
+        Console.WriteLine("Getting app package list ...");
+
+        IEnumerable<MsixPackage> allMsixPackages = (await dcathandler.GetPackagesForProductAsync())
+            .Where(p => p.PackageMoniker.StartsWith(packageMonikerPrefix))
+            .Select(p =>
+            {
+                if (p.PackageMoniker.Split("_") is [_, string version, string architecture, ..])
+                {
+                    return new MsixPackage(
+                        p.PackageMoniker,
+                        new Version(version),
+                        architecture,
+                        p.PackageUri.ToString(),
+                        string.Empty
+                        );
+                }
+                else
+                {
+                    throw new Exception(@$"Cannot get version and architecture from package moniker ""{p.PackageMoniker}""");
+                }
+            });
+
+        if (allMsixPackages.Max(p => p.Version) is not Version latestVersion)
         {
             return new List<MsixPackage>();
         }
 
-        List<string> latestPackageFullNames = allPackages
-            .Where(x => x.Version == latestVersion)
-            .Select(x => x.PackageFullName)
-            .Distinct()
-            .ToList();
+        List<MsixPackage> result = new();
 
-        Console.WriteLine("Getting app package list ...");
-
-        IEnumerable<PackageInstance> packageInstances = (await dcathandler.GetPackagesForProductAsync())
-            .Where(x => latestPackageFullNames.Contains(x.PackageMoniker));
-
-        List<MsixPackage> msixPackages = new();
-
-        foreach (PackageInstance packageInstance in packageInstances)
+        foreach (MsixPackage package in allMsixPackages.Where(p => p.Version == latestVersion))
         {
-            string downloadUrl = packageInstance.PackageUri.ToString();
-
-            string fileName = await GetFileNameFromDownloadUrl(downloadUrl);
-
-            string[] monikerSplits = packageInstance.PackageMoniker.Split("_");
-
-            MsixPackage msixPackage = new(
-                packageInstance.PackageMoniker,
-                monikerSplits[1],
-                monikerSplits[2],
-                downloadUrl,
-                fileName
-            );
-
-            msixPackages.Add(msixPackage);
+            string fileName = await GetFileNameFromDownloadUrl(package.DownloadUrl);
+            result.Add(package with { FileName = fileName });
         }
 
-        Console.WriteLine($"The latest app version is: {msixPackages.FirstOrDefault()?.Version}");
-        Console.WriteLine($"Found {"package".ToQuantity(msixPackages.Count)}: {string.Join(", ", msixPackages.Select(x => x.Architecture))}");
+        Console.WriteLine($"The latest app version is: {result.FirstOrDefault()?.Version}");
+        Console.WriteLine($"Found {"package".ToQuantity(result.Count)}: {string.Join(", ", result.Select(x => x.Architecture))}");
         Console.WriteLine();
 
-        return msixPackages;
+        return result;
     }
 
     /// <summary>
