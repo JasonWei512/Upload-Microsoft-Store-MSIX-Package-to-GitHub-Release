@@ -128,7 +128,7 @@ public static class StoreHelper
     }
 
     /// <summary>
-    /// Get file name from <paramref name="url"/> without downloading it. 
+    /// Get file name from <paramref name="url"/> without downloading it.
     /// </summary>
     private static Task<string> GetFileNameFromDownloadUrl(string url)
     {
@@ -143,7 +143,7 @@ public static class StoreHelper
             taskCompletionSource.SetResult(fileName);
         };
 
-        downloader.DownloadFileTaskAsync(url);
+        downloader.DownloadFileTaskAsync(url, new DirectoryInfo(Path.GetTempPath()));
 
         return taskCompletionSource.Task;
     }
