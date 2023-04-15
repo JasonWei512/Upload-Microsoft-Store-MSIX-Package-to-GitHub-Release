@@ -195,6 +195,6 @@ public static class StoreHelper
         string receivedSize = progress.ReceivedBytesSize.Bytes().Humanize().PadLeft(totalSize.Length);
         string mbPerSecond = progress.BytesPerSecondSpeed.Bytes().Humanize() + "/s";
 
-        return $"Progress: {percentage}  -  {receivedSize} / {totalSize}  -  {mbPerSecond}";
+        return $"Download Progress: {percentage}  -  {receivedSize} / {totalSize}  -  {mbPerSecond}";
     }
 }
