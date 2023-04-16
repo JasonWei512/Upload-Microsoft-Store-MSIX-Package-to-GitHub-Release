@@ -56,11 +56,10 @@ public class GitHubHelper
     /// </param>
     public static async Task UploadMsixPackagesToGitHubRelease(Release gitHubRelease, IEnumerable<MsixPackage> msixPackages, string? assetNamePattern = null, bool dryRun = false)
     {
-        List<MsixPackage> packagesToUpload = msixPackages
-            .Where(
-                p => !gitHubRelease.Assets.Select(a => a.Name).Contains(GetGitHubReleaseAssetName(p, assetNamePattern))
-            )
-            .ToList();
+        List<MsixPackage> packagesToUpload = msixPackages.Where(
+                p => !gitHubRelease.Assets.Select(a => a.Name)
+                    .Contains(GetGitHubReleaseAssetName(p, assetNamePattern), StringComparer.InvariantCultureIgnoreCase)
+            ).ToList();
 
         Console.WriteLine($"{"file".ToQuantity(packagesToUpload.Count)} to upload.");
         Console.WriteLine();
