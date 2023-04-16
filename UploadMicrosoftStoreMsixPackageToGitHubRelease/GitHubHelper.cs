@@ -75,7 +75,12 @@ public class GitHubHelper
             using Stream fileStream = File.OpenRead(msixPackageFile.FilePath);
             long totalBytes = fileStream.Length;
             long lastTransferredBytes = 0;
-            long currentTransferredBytes = -totalBytes; // The fileStream will be read twice by gitHubClient when uploading
+
+            // When calling "await gitHubClient.Repository.Release.UploadAsset()", the fileStream will be read twice by gitHubClient.
+            // Before performing the actual uploading, it will be read from begin to end for once. When uploading, it will be read again for once.
+            // So in order to get the correct count of uploaded bytes, its initial value is set to minus file size.
+            long currentTransferredBytes = -totalBytes;
+
             ThrottleDispatcher throttleDispatcher = new(1000);
             using ProgressStream.ProgressStream fileStreamWithProgress = new(fileStream, new Progress<int>(transferredChunkBytes =>
             {
