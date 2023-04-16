@@ -1,3 +1,4 @@
+using DebounceThrottle;
 using Humanizer;
 using Octokit;
 
@@ -72,13 +73,41 @@ public class GitHubHelper
             MsixPackageFile msixPackageFile = await StoreHelper.DownloadMsixPackageToTempDir(packageToUpload);
 
             using Stream fileStream = File.OpenRead(msixPackageFile.FilePath);
+            long totalBytes = fileStream.Length;
+            long lastTransferredBytes = 0;
 
-            ReleaseAssetUpload releaseAssetUpload = new(gitHubReleaseAssetName, "application/octet-stream", fileStream, null);
+            // When calling "await gitHubClient.Repository.Release.UploadAsset()", the fileStream will be read twice by gitHubClient.
+            // Before performing the actual uploading, it will be read from begin to end for once. When uploading, it will be read again for once.
+            // So in order to get the correct count of uploaded bytes, its initial value is set to minus file size.
+            long currentTransferredBytes = -totalBytes;
+
+            ThrottleDispatcher throttleDispatcher = new(1000);
+            using ProgressStream.ProgressStream fileStreamWithProgress = new(fileStream, new Progress<int>(transferredChunkBytes =>
+            {
+                currentTransferredBytes += transferredChunkBytes;
+
+                throttleDispatcher.Throttle(() =>
+                {
+                    if (currentTransferredBytes > 0)
+                    {
+                        string percentage = ((double)currentTransferredBytes / totalBytes * 100).ToString("00.00").PadLeft(6) + "%";
+                        string totalSize = totalBytes.Bytes().Humanize();
+                        string transferredSize = currentTransferredBytes.Bytes().Humanize().PadLeft(totalSize.Length);
+                        string mbPerSecond = (currentTransferredBytes - lastTransferredBytes).Bytes().Humanize() + "/s";
+                        lastTransferredBytes = currentTransferredBytes;
+
+                        Console.WriteLine($"Upload Progress: {percentage}  -  {transferredSize} / {totalSize}  -  {mbPerSecond}");
+                    }
+                });
+            }));
+
+            ReleaseAssetUpload releaseAssetUpload = new(gitHubReleaseAssetName, "application/octet-stream", fileStreamWithProgress, null);
 
             if (!dryRun)
             {
                 Console.WriteLine("Uploading to GitHub release ...");
                 await gitHubClient.Repository.Release.UploadAsset(gitHubRelease, releaseAssetUpload);
+                await Task.Delay(TimeSpan.FromMilliseconds(1500));
                 Console.WriteLine($"File uploaded: {gitHubReleaseAssetName}");
             }
             else
