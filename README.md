@@ -15,34 +15,35 @@ For example, if the latest Microsoft Store package version is `1.2.3.0`, it will
 
 # Quick Start
 
-1. Set your GitHub repository's `Settings -> Actions -> General -> Workflow permissions` to `Read and write permissions`.
+Add a YAML file to `.github/workflows/upload-store-msix-to-release.yml` :
 
-2. Add a YAML file to `.github/workflows/upload-store-msix-to-release.yml` :
+```yaml
+name: Upload store MSIX to release
 
-   ```yaml
-   name: Upload store MSIX to release
+permissions:
+  contents: write
 
-   on:
-     release:
-       types: [released]   # Run the action when a GitHub release is published
+on:
+  release:
+    types: [released]   # Run the action when a GitHub release is published
 
-     schedule:
-       - cron:  '0 */6 * * *'  # Run the action every 6 hours
+  schedule:
+    - cron:  '0 */6 * * *'  # Run the action every 6 hours
 
-     workflow_dispatch:    # Manually run the action
+  workflow_dispatch:    # Manually run the action
 
-   jobs:
-     upload-store-msix-to-release:
-       runs-on: ubuntu-latest
+jobs:
+  upload-store-msix-to-release:
+    runs-on: ubuntu-latest
 
-       steps:
-       - name: Upload store MSIX to release
-         uses: JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release@v1
-         with:
-           store-id: 9NF7JTB3B17P
-           token: ${{ secrets.GITHUB_TOKEN }}
-           asset-name-pattern: AppName_{version}_{arch}  # Optional
-   ```
+    steps:
+    - name: Upload store MSIX to release
+      uses: JasonWei512/Upload-Microsoft-Store-MSIX-Package-to-GitHub-Release@v1
+      with:
+        store-id: 9NF7JTB3B17P
+        token: ${{ secrets.GITHUB_TOKEN }}
+        asset-name-pattern: AppName_{version}_{arch}  # Optional
+```
 
 
 # Action Inputs
