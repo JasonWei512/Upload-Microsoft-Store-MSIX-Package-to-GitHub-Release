@@ -18,7 +18,7 @@ public static class CommonHelper
         Version gitHubReleaseVersion;
         try
         {
-            gitHubReleaseVersion = new(gitHubReleaseVersionString);
+            gitHubReleaseVersion = new Version(gitHubReleaseVersionString);
         }
         catch
         {
